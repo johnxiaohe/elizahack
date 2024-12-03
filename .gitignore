@@ -7,6 +7,8 @@ concatenated-output.ts
 embedding-cache.json
 
 .DS_Store
+.vscode
+.idea
 
 dist/
 # Allow models directory but ignore model files
@@ -34,8 +36,6 @@ twitter_cookies.json
 timeline_cache.json
 
 *.sqlite
-
-characters/
 
 packages/core/src/providers/cache
 packages/core/src/providers/cache/*
