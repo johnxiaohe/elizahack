@@ -1,7 +1,7 @@
 import { Message } from "@telegraf/types";
 import { Context, Telegraf } from "telegraf";
 
-import { composeContext } from "@ai16z/eliza";
+import { composeContext, elizaLogger } from "@ai16z/eliza";
 import { embeddingZeroVector } from "@ai16z/eliza";
 import {
     Content,
@@ -234,7 +234,7 @@ export class MessageManager {
                 context: shouldRespondContext,
                 modelClass: ModelClass.SMALL,
             });
-
+            elizaLogger.info("ai response", response)
             return response === "RESPOND";
         }
 
