@@ -7,9 +7,10 @@ export const TelegramClientInterface: Client = {
     start: async (runtime: IAgentRuntime) => {
         await validateTelegramConfig(runtime);
 
+        var tokenKey = "TELEGRAM_BOT_TOKEN" + "_" + runtime.character.name;
         const tg = new TelegramClient(
             runtime,
-            runtime.getSetting("TELEGRAM_BOT_TOKEN")
+            runtime.getSetting(tokenKey)
         );
 
         await tg.start();
