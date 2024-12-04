@@ -365,7 +365,7 @@ export class MessageManager {
             );
 
             const messageId = stringToUuid(
-                message.message_id.toString()
+                message.date.toString()
             ) as UUID;
 
             // Handle images
@@ -545,7 +545,7 @@ export class MessageManager {
             // create memory
             const newMemory: Memory = {
                 id: stringToUuid(
-                    msgResult.message_id.toString() +
+                    msgResult.date.toString() +
                         "-" +
                         this.runtime.agentId
                 ),
