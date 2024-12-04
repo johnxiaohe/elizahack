@@ -335,7 +335,7 @@ export class MessageManager {
             const userName =
                 ctx.from.username || ctx.from.first_name || "Unknown User";
             const chatId = stringToUuid(
-                ctx.chat?.id.toString() + "-" + this.runtime.agentId
+                ctx.chat?.id.toString()
             ) as UUID;
             const agentId = this.runtime.agentId;
             const roomId = chatId;
@@ -395,7 +395,6 @@ export class MessageManager {
                 createdAt: message.date * 1000,
                 embedding: embeddingZeroVector,
             };
-            elizaLogger.info(memory.userId, content.text);
 
             await this.runtime.messageManager.createMemory(memory);
 
@@ -405,8 +404,8 @@ export class MessageManager {
             elizaLogger.info(JSON.stringify(state));
 
             // Decide whether to respond
-            // const shouldRespond = await this._shouldRespond(message, state);
-            const shouldRespond = true;
+            const shouldRespond = await this._shouldRespond(message, state);
+            // const shouldRespond = true;
 
             if (shouldRespond) {
                 // Generate response
@@ -432,7 +431,7 @@ export class MessageManager {
                 const callback: HandlerCallback = async (content: Content) => {
                     const sentMessages = await this.sendMessageInChunks(
                         ctx,
-                        "abc",
+                        context,
                         message.message_id
                     );
 
@@ -449,9 +448,9 @@ export class MessageManager {
                                     "-" +
                                     this.runtime.agentId
                             ),
-                            agentId,
-                            userId,
-                            roomId,
+                            agentId: agentId,
+                            userId: agentId,
+                            roomId: roomId,
                             content: {
                                 ...content,
                                 text: sentMessage.text,
