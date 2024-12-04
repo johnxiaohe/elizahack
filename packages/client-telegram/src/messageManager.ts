@@ -312,13 +312,10 @@ export class MessageManager {
         while(true) {
             var length = 0
             await this.runtime.messageManager.getMemoriesByRoomIds({roomIds: ["db86f761-6fdc-016f-b4fa-48e11ef2a23b"]}).then((memories) => {
-                if (length == 0) {
+                if (memories.length > length) {
                     length = memories.length
-                }else{
-                    if (memories.length < length) {
-                        length = memories.length
-                        elizaLogger.info(JSON.stringify(memories[length - 1]))
-                    }
+                    var lastMemory = memories[length - 1]
+                    elizaLogger.info(lastMemory.roomId, lastMemory.agentId, lastMemory.userId, JSON.stringify(lastMemory.content) )
                 }
             });
             await new Promise(resolve => setTimeout(resolve, 1000)); // Pause for 1 second
