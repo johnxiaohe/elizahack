@@ -365,7 +365,7 @@ export class MessageManager {
             );
 
             const messageId = stringToUuid(
-                message.message_id.toString() + "-" + this.runtime.agentId
+                message.message_id.toString()
             ) as UUID;
 
             // Handle images
