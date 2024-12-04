@@ -1,5 +1,5 @@
 {
-    "name": "wuchang",
+    "name": "mamian",
     "clients": ["telegram"],
     "modelProvider": "redpill",
     "settings": {

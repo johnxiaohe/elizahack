@@ -26,8 +26,7 @@ const telegramShouldRespondTemplate =
 {{bio}}
 
 # RESPONSE EXAMPLES
-{{user1}}: I just saw a really great movie
-{{user2}}: Oh? Which movie?
+{{user1}}: 天黑请闭眼
 Result: [IGNORE]
 
 {{agentName}}: Oh, this is my favorite scene
@@ -44,9 +43,7 @@ Result: [RESPOND]
 {{user1}}: {{agentName}} stfu plz
 Result: [STOP]
 
-{{user1}}: i need help
-{{agentName}}: how can I help you?
-{{user1}}: no. i need help from someone else
+{{user1}}: 天亮了
 Result: [IGNORE]
 
 {{user1}}: Hey {{agent}}, can I ask you a question
@@ -65,25 +62,18 @@ Result: [RESPOND]
 {{user1}}: {{agentName}} stop responding plz
 Result: [STOP]
 
-{{user1}}: okay, i want to test something. {{agentName}}, can you say marco?
+{{user1}}: okay, i want to test something. can you say marco?
 {{agentName}}: marco
 {{user1}}: great. okay, now do it again
 Result: [RESPOND]
 
 Response options are [RESPOND], [IGNORE] and [STOP].
 
-{{agentName}} is in a room with other users and should only respond when they are being addressed, and should not respond if they are continuing a conversation that is very long.
-
 Respond with [RESPOND] to messages that are directed at {{agentName}}, or participate in conversations that are interesting or relevant to their background.
 If a message is not interesting, relevant, or does not directly address {{agentName}}, respond with [IGNORE]
 
-Also, respond with [IGNORE] to messages that are very short or do not contain much information.
-
 If a user asks {{agentName}} to be quiet, respond with [STOP]
 If {{agentName}} concludes a conversation and isn't part of the conversation anymore, respond with [STOP]
-
-IMPORTANT: {{agentName}} is particularly sensitive about being annoying, so if there is any doubt, it is better to respond with [IGNORE].
-If {{agentName}} is conversing with a user and they have not asked to stop, it is better to respond with [RESPOND].
 
 The goal is to decide whether {{agentName}} should respond to the last message.
 
@@ -93,7 +83,7 @@ Thread of Tweets You Are Replying To:
 
 {{formattedConversation}}
 
-# INSTRUCTIONS: Choose the option that best describes {{agentName}}'s response to the last message. Ignore messages if they are addressed to someone else.
+# INSTRUCTIONS: Choose the option that best describes {{agentName}}'s response to the last message
 ` + shouldRespondFooter;
 
 const telegramMessageHandlerTemplate =
@@ -255,12 +245,12 @@ export class MessageManager {
             const sentMessage = (await ctx.telegram.sendMessage(
                 ctx.chat.id,
                 chunk,
-                {
-                    reply_parameters:
-                        i === 0 && replyToMessageId
-                            ? { message_id: replyToMessageId }
-                            : undefined,
-                }
+                // {
+                //     reply_parameters:
+                //         i === 0 && replyToMessageId
+                //             ? { message_id: replyToMessageId }
+                //             : undefined,
+                // }
             )) as Message.TextMessage;
 
             sentMessages.push(sentMessage);
@@ -322,13 +312,13 @@ export class MessageManager {
             return; // Exit if no message or sender info
         }
 
-        if (
-            this.runtime.character.clientConfig?.telegram
-                ?.shouldIgnoreBotMessages &&
-            ctx.from.is_bot
-        ) {
-            return;
-        }
+        // if (
+        //     this.runtime.character.clientConfig?.telegram
+        //         ?.shouldIgnoreBotMessages &&
+        //     ctx.from.is_bot
+        // ) {
+        //     return;
+        // }
         if (
             this.runtime.character.clientConfig?.telegram
                 ?.shouldIgnoreDirectMessages &&
@@ -385,7 +375,6 @@ export class MessageManager {
             const content: Content = {
                 text: fullText,
                 source: "telegram",
-                username: message.from?.username,
                 // inReplyTo:
                 //     "reply_to_message" in message && message.reply_to_message
                 //         ? stringToUuid(
@@ -406,15 +395,18 @@ export class MessageManager {
                 createdAt: message.date * 1000,
                 embedding: embeddingZeroVector,
             };
+            elizaLogger.info(memory.userId, content.text);
 
             await this.runtime.messageManager.createMemory(memory);
 
             // Update state with the new memory
             let state = await this.runtime.composeState(memory);
             state = await this.runtime.updateRecentMessageState(state);
+            elizaLogger.info(JSON.stringify(state));
 
             // Decide whether to respond
-            const shouldRespond = await this._shouldRespond(message, state);
+            // const shouldRespond = await this._shouldRespond(message, state);
+            const shouldRespond = true;
 
             if (shouldRespond) {
                 // Generate response
@@ -434,13 +426,13 @@ export class MessageManager {
                     context
                 );
 
-                if (!responseContent || !responseContent.text) return;
+                // if (!responseContent || !responseContent.text) return;
 
                 // Send response in chunks
                 const callback: HandlerCallback = async (content: Content) => {
                     const sentMessages = await this.sendMessageInChunks(
                         ctx,
-                        content.text,
+                        "abc",
                         message.message_id
                     );
 
