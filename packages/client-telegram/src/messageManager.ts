@@ -285,7 +285,7 @@ export class MessageManager {
         context: string
     ): Promise<Content> {
         const { userId, roomId } = message;
-
+        elizaLogger.info(context)
         const response = await generateMessageResponse({
             runtime: this.runtime,
             context,
@@ -431,7 +431,7 @@ export class MessageManager {
                 const callback: HandlerCallback = async (content: Content) => {
                     const sentMessages = await this.sendMessageInChunks(
                         ctx,
-                        context,
+                        content.text,
                         message.message_id
                     );
 
