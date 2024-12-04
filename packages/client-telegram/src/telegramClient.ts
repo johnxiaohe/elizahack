@@ -2,12 +2,13 @@ import { Context, Telegraf } from "telegraf";
 
 import { IAgentRuntime } from "@ai16z/eliza";
 import { MessageManager } from "./messageManager.ts";
-import { elizaLogger } from "@ai16z/eliza";
+import { elizaLogger, stringToUuid, UUID } from "@ai16z/eliza";
 
 export class TelegramClient {
     private bot: Telegraf<Context>;
     private runtime: IAgentRuntime;
     private messageManager: MessageManager;
+    private roomId : string = "";
 
     constructor(runtime: IAgentRuntime, botToken: string) {
         elizaLogger.log("📱 Constructing new TelegramClient...");

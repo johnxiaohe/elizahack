@@ -133,6 +133,8 @@ export class MessageManager {
         this.bot = bot;
         this.runtime = runtime;
         this.imageService = ImageDescriptionService.getInstance();
+        // 启动room msg消息监听
+        this.loopMsgListiner();
     }
 
     // Process image messages and generate descriptions
@@ -285,7 +287,7 @@ export class MessageManager {
         context: string
     ): Promise<Content> {
         const { userId, roomId } = message;
-        
+
         const response = await generateMessageResponse({
             runtime: this.runtime,
             context,
@@ -304,6 +306,23 @@ export class MessageManager {
         });
 
         return response;
+    }
+
+    private async loopMsgListiner() {
+        while(true) {
+            length = 0
+            await this.runtime.messageManager.getMemoriesByRoomIds({roomIds: ["db86f761-6fdc-016f-b4fa-48e11ef2a23b"]}).then((memories) => {
+                if (length == 0) {
+                    length = memories.length
+                }else{
+                    if (memories.length < length) {
+                        length = memories.length
+                        elizaLogger.info(JSON.stringify(memories[length - 1]))
+                    }
+                }
+            });
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Pause for 1 second
+        }
     }
 
     // Main handler for incoming messages
@@ -400,8 +419,9 @@ export class MessageManager {
 
             // Update state with the new memory
             let state = await this.runtime.composeState(memory);
+            // 会将该 room的所有聊天记录按照时间线顺序输出
             state = await this.runtime.updateRecentMessageState(state);
-            elizaLogger.info(state.recentMessages);
+            // elizaLogger.info(state.recentMessages);
 
             // Decide whether to respond
             const shouldRespond = await this._shouldRespond(message, state);
