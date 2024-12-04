@@ -351,9 +351,10 @@ export class MessageManager {
             const userId = stringToUuid(ctx.from.id.toString()) as UUID;
             const userName =
                 ctx.from.username || ctx.from.first_name || "Unknown User";
-            const chatId = ctx.chat?.id.toString() as UUID;
+            const chatId = stringToUuid(ctx.chat?.id.toString()) as UUID;
             const agentId = this.runtime.agentId;
             const roomId = chatId;
+            elizaLogger.info(ctx.chat?.id.toString());
 
             await this.runtime.ensureConnection(
                 userId,
@@ -539,7 +540,7 @@ export class MessageManager {
             );
 
             // sendmsg
-            var msgResult = await this.bot.telegram.sendMessage(memory.roomId, responseContent.text) as Message.TextMessage;
+            var msgResult = await this.bot.telegram.sendMessage(-4540792649, responseContent.text) as Message.TextMessage;
 
             // create memory
             const newMemory: Memory = {
