@@ -272,7 +272,7 @@ export async function generateText({
                 elizaLogger.debug("Initializing RedPill model.");
                 const serverUrl = models[provider].endpoint;
                 const openai = createOpenAI({ apiKey, baseURL: serverUrl });
-                elizaLogger.info("system: ", settings.SYSTEM_PROMPT);
+                elizaLogger.debug("system: ", settings.SYSTEM_PROMPT);
                 const { text: openaiResponse } = await aiGenerateText({
                     model: openai.languageModel(model),
                     prompt: context,

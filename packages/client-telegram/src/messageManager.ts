@@ -285,7 +285,7 @@ export class MessageManager {
         context: string
     ): Promise<Content> {
         const { userId, roomId } = message;
-        elizaLogger.info(context)
+        
         const response = await generateMessageResponse({
             runtime: this.runtime,
             context,
@@ -401,7 +401,7 @@ export class MessageManager {
             // Update state with the new memory
             let state = await this.runtime.composeState(memory);
             state = await this.runtime.updateRecentMessageState(state);
-            elizaLogger.info(JSON.stringify(state));
+            elizaLogger.info(state.recentMessages);
 
             // Decide whether to respond
             const shouldRespond = await this._shouldRespond(message, state);
