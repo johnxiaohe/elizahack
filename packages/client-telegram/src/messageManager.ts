@@ -310,7 +310,7 @@ export class MessageManager {
 
     private async loopMsgListiner() {
         while(true) {
-            length = 0
+            var length = 0
             await this.runtime.messageManager.getMemoriesByRoomIds({roomIds: ["db86f761-6fdc-016f-b4fa-48e11ef2a23b"]}).then((memories) => {
                 if (length == 0) {
                     length = memories.length
