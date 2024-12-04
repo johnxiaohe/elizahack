@@ -314,6 +314,7 @@ export class MessageManager {
             await this.runtime.messageManager.getMemoriesByRoomIds({roomIds: ["db86f761-6fdc-016f-b4fa-48e11ef2a23b"]}).then((memories) => {
                 if (memories.length > length) {
                     length = memories.length
+                    this.msgCall(memories[length - 1])
                     var lastMemory = memories[length - 1]
                     elizaLogger.info(JSON.stringify(lastMemory.content))
                 }
@@ -350,9 +351,7 @@ export class MessageManager {
             const userId = stringToUuid(ctx.from.id.toString()) as UUID;
             const userName =
                 ctx.from.username || ctx.from.first_name || "Unknown User";
-            const chatId = stringToUuid(
-                ctx.chat?.id.toString()
-            ) as UUID;
+            const chatId = ctx.chat?.id.toString() as UUID;
             const agentId = this.runtime.agentId;
             const roomId = chatId;
 
@@ -510,5 +509,80 @@ export class MessageManager {
             console.error("❌ Error handling message:", error);
             console.error("Error sending message:", error);
         }
+    }
+
+    private async msgCall(memory: Memory) {
+        let state = await this.runtime.composeState(memory);
+        // 会将该 room的所有聊天记录按照时间线顺序输出
+        state = await this.runtime.updateRecentMessageState(state);
+        // elizaLogger.info(state.recentMessages);
+
+        // Decide whether to respond
+        const shouldRespond = await this._shouldRespondInner(state);
+
+        if (shouldRespond) {
+            // Generate response
+            const context = composeContext({
+                state,
+                template:
+                    this.runtime.character.templates
+                        ?.telegramMessageHandlerTemplate ||
+                    this.runtime.character?.templates
+                        ?.messageHandlerTemplate ||
+                    telegramMessageHandlerTemplate,
+            });
+
+            const responseContent = await this._generateResponse(
+                memory,
+                state,
+                context
+            );
+
+            // sendmsg
+            var msgResult = await this.bot.telegram.sendMessage(memory.roomId, responseContent.text) as Message.TextMessage;
+
+            // create memory
+            const newMemory: Memory = {
+                id: stringToUuid(
+                    msgResult.message_id.toString() +
+                        "-" +
+                        this.runtime.agentId
+                ),
+                agentId: this.runtime.agentId,
+                userId: this.runtime.agentId,
+                roomId: memory.roomId,
+                content: {
+                    ...responseContent,
+                    text: msgResult.text,
+                },
+                createdAt: msgResult.date * 1000,
+                embedding: embeddingZeroVector,
+            };
+
+            await this.runtime.messageManager.createMemory(newMemory);
+            // Update state after response
+            state = await this.runtime.updateRecentMessageState(state);
+        }
+    }
+
+    private async _shouldRespondInner(
+        state: State
+    ): Promise<boolean> {
+        const shouldRespondContext = composeContext({
+            state,
+            template:
+                this.runtime.character.templates
+                    ?.telegramShouldRespondTemplate ||
+                this.runtime.character?.templates?.shouldRespondTemplate ||
+                telegramShouldRespondTemplate,
+        });
+
+        const response = await generateShouldRespond({
+            runtime: this.runtime,
+            context: shouldRespondContext,
+            modelClass: ModelClass.SMALL,
+        });
+        elizaLogger.info("ai response", response)
+        return response === "RESPOND";
     }
 }
