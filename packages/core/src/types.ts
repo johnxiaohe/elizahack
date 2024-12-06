@@ -693,6 +693,7 @@ export type Character = {
         bio: string;
         nicknames?: string[];
     };
+    role: string;
 };
 
 /**

@@ -5,6 +5,7 @@ export const defaultCharacter: Character = {
     username: "eliza",
     plugins: [],
     clients: [],
+    role: "AI",
     modelProvider: ModelProviderName.OPENAI,
     settings: {
         secrets: {},

@@ -44,7 +44,7 @@ export class TelegramClient {
 
             this.bot.on("message", async (ctx) => {
                 try {
-                    elizaLogger.info(this.runtime.character.name,"📥 Received message:", ctx.message);
+                    elizaLogger.debug(this.runtime.character.name,"📥 Received message:", ctx.message);
                     await this.messageManager.handleMessage(ctx);
                 } catch (error) {
                     elizaLogger.error("❌ Error handling message:", error);
