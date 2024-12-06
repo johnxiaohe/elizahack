@@ -29,54 +29,48 @@ const telegramShouldRespondTemplate =
 {{user1}}: 天黑请闭眼
 Result: [IGNORE]
 
-{{agentName}}: Oh, this is my favorite scene
-{{user1}}: sick
-{{user2}}: wait, why is it your favorite scene
-Result: [RESPOND]
-
-{{user1}}: stfu bot
-Result: [STOP]
-
-{{user1}}: Hey {{agent}}, can you help me with something
-Result: [RESPOND]
-
-{{user1}}: {{agentName}} stfu plz
-Result: [STOP]
-
 {{user1}}: 天亮了
 Result: [IGNORE]
 
-{{user1}}: Hey {{agent}}, can I ask you a question
-{{agentName}}: Sure, what is it
-{{user1}}: can you ask claude to create a basic react module that demonstrates a counter
-Result: [RESPOND]
-
-{{user1}}: {{agentName}} can you tell me a story
-{{agentName}}: uhhh...
-{{user1}}: please do it
-{{agentName}}: okay
-{{agentName}}: once upon a time, in a quaint little village, there was a curious girl named elara
-{{user1}}: I'm loving it, keep going
-Result: [RESPOND]
-
-{{user1}}: {{agentName}} stop responding plz
-Result: [STOP]
-
-{{user1}}: okay, i want to test something. can you say marco?
-{{agentName}}: marco
-{{user1}}: great. okay, now do it again
+{{user1}}: 请投票选择放逐对象
 Result: [RESPOND]
 
 Response options are [RESPOND], [IGNORE] and [STOP].
 
-Respond with [RESPOND] to messages that are directed at {{agentName}}, or participate in conversations that are interesting or relevant to their background.
-If a message is not interesting, relevant, or does not directly address {{agentName}}, respond with [IGNORE]
+# 背景
+你们在玩一场六人局的狼人杀游戏，请按照狼人杀规则，根据你的身份、发言顺序结合当前最新消息以及消息发送人来决定是否发言。你的目标是带领阵营胜利，你需要隐藏自己身份并且推理其他人的身份，将其他阵营的角色投票出去或者杀死。
 
-If a user asks {{agentName}} to be quiet, respond with [STOP]
-If {{agentName}} concludes a conversation and isn't part of the conversation anymore, respond with [STOP]
+# 身份技能
+村民：村民不具备任何技能，只能在白天发言和放逐投票。
+预言家：预言家可以在夜间查验玩家的阵营身份，每晚只能查验一人。
+女巫：女巫有解药和毒药，解药可以救任意被刀的玩家，毒药可以毒杀任意玩家，其中解药和毒药都只有一次机会并且不能在同一晚上用。
+狼人：狼人具有在夜晚刀任意一名玩家的能力，但必须所有狼人统一刀口。
 
-The goal is to decide whether {{agentName}} should respond to the last message.
+# 狼人杀规则
+6人狼人游戏的配置为：2个村民、1个预言家、1个女巫和2个狼人。其中2个村民、预言家和女巫归属为好人阵营，而2个狼人则为狼人阵营，好人阵营获胜条件是放逐所有的狼人，狼人胜利条件是杀光所有好人。
 
+# 游戏流程/发言顺序
+由主持人决定游戏进程和其他玩家的动作，比如天黑了所有玩家闭眼、天亮了所有玩家睁眼、昨晚是平安夜、昨晚谁死了、预言家查验身份、女巫是否用药等
+夜晚阶段所有玩家闭眼：主持人说天黑请闭眼进入夜晚阶段。
+1.狼人睁眼：狼人互相知道队友身份，选择一名玩家进行“杀害”。
+2.预言家睁眼：预言家可以选择一名玩家查验其身份（是否是狼人）。主持人告诉预言家该玩家的身份。每晚只能检查一个玩家。
+3.女巫睁眼：女巫首先会得知是否有玩家在狼人攻击中受伤。如果有玩家被狼人攻击，女巫可以选择使用解药救活该玩家。女巫也可以选择使用毒药毒死一名玩家，但每晚只能使用一次毒药。
+4.夜晚结束：所有角色完成行动后，主持人宣布夜晚结束，所有玩家睁眼。
+5.白天阶段死亡玩家揭示：主持人说天亮了，宣布谁在夜晚被狼人杀害。如果有玩家死亡，主持人会揭示该玩家的身份。
+6.讨论阶段：所有存活的玩家开始按照顺序讨论发言，推理死者身份并猜测谁是狼人。玩家可以根据言辞、行为、投票等进行交流，但狼人会伪装自己，尽量不暴露身份。
+7.投票阶段：所有玩家轮流投票，选择一名玩家进行处决。投票可以选择“杀”或“不杀”。如果投票结果平票，可以通过再次投票或随机决定。
+8.执行处决：被投票人数最多的玩家会被处决。主持人揭示该玩家的身份。
+9.结束白天阶段：然后进入下一轮夜晚阶段。重复夜晚和白天阶段，直到出现胜利条件。
+
+# 发言顺序
+wuchang,xiaobai,mamian,niutou,mengpo,yuyu 你是 {{agentName}}
+
+主持人宣布游戏结束后，大家停止说话。
+
+# 发言历史
+下面是其他游戏玩家的发言，你需要根据这些发言来推理别人的角色，最后根据你的推理结果决定是否需要回复这个发言，或是引导别人发言。
+消息模板：(消息的时间序列) [角色Id] 发言人名称: 发言内容
+下面是最近的消息序列，每条消息以\n结束，如果最新的那条消息是 {{agentName}} 发出的就回复 [IGNORE]，如果不是就回复 [RESPOND]
 {{recentMessages}}
 
 Thread of Tweets You Are Replying To:
@@ -313,10 +307,12 @@ export class MessageManager {
         while(true) {
             await this.runtime.messageManager.getMemoriesByRoomIds({roomIds: ["db86f761-6fdc-016f-b4fa-48e11ef2a23b"]}).then((memories) => {
                 if (memories.length > length) {
+                    if (length > 0) {
+                        var lastMemory = memories[length - 1]
+                        this.msgCall(lastMemory)
+                        elizaLogger.info(JSON.stringify(lastMemory.content))
+                    }
                     length = memories.length
-                    this.msgCall(memories[length - 1])
-                    var lastMemory = memories[length - 1]
-                    elizaLogger.info(JSON.stringify(lastMemory.content))
                 }
             });
             await new Promise(resolve => setTimeout(resolve, 1000)); // Pause for 1 second
@@ -415,97 +411,97 @@ export class MessageManager {
             await this.runtime.messageManager.createMemory(memory);
 
             // Update state with the new memory
-            let state = await this.runtime.composeState(memory);
+            // let state = await this.runtime.composeState(memory);
             // 会将该 room的所有聊天记录按照时间线顺序输出
-            state = await this.runtime.updateRecentMessageState(state);
+            // state = await this.runtime.updateRecentMessageState(state);
             // elizaLogger.info(state.recentMessages);
 
             // Decide whether to respond
-            const shouldRespond = await this._shouldRespond(message, state);
+            // const shouldRespond = await this._shouldRespond(message, state);
             // const shouldRespond = true;
 
-            if (shouldRespond) {
-                // Generate response
-                const context = composeContext({
-                    state,
-                    template:
-                        this.runtime.character.templates
-                            ?.telegramMessageHandlerTemplate ||
-                        this.runtime.character?.templates
-                            ?.messageHandlerTemplate ||
-                        telegramMessageHandlerTemplate,
-                });
+            // if (shouldRespond) {
+            //     // Generate response
+            //     const context = composeContext({
+            //         state,
+            //         template:
+            //             this.runtime.character.templates
+            //                 ?.telegramMessageHandlerTemplate ||
+            //             this.runtime.character?.templates
+            //                 ?.messageHandlerTemplate ||
+            //             telegramMessageHandlerTemplate,
+            //     });
 
-                const responseContent = await this._generateResponse(
-                    memory,
-                    state,
-                    context
-                );
+            //     const responseContent = await this._generateResponse(
+            //         memory,
+            //         state,
+            //         context
+            //     );
 
-                // if (!responseContent || !responseContent.text) return;
+            //     // if (!responseContent || !responseContent.text) return;
 
-                // Send response in chunks
-                const callback: HandlerCallback = async (content: Content) => {
-                    const sentMessages = await this.sendMessageInChunks(
-                        ctx,
-                        content.text,
-                        message.message_id
-                    );
+            //     // Send response in chunks
+            //     const callback: HandlerCallback = async (content: Content) => {
+            //         const sentMessages = await this.sendMessageInChunks(
+            //             ctx,
+            //             content.text,
+            //             message.message_id
+            //         );
 
-                    const memories: Memory[] = [];
+            //         const memories: Memory[] = [];
 
-                    // Create memories for each sent message
-                    for (let i = 0; i < sentMessages.length; i++) {
-                        const sentMessage = sentMessages[i];
-                        const isLastMessage = i === sentMessages.length - 1;
+            //         // Create memories for each sent message
+            //         for (let i = 0; i < sentMessages.length; i++) {
+            //             const sentMessage = sentMessages[i];
+            //             const isLastMessage = i === sentMessages.length - 1;
 
-                        const memory: Memory = {
-                            id: stringToUuid(
-                                sentMessage.message_id.toString() +
-                                    "-" +
-                                    this.runtime.agentId
-                            ),
-                            agentId: agentId,
-                            userId: agentId,
-                            roomId: roomId,
-                            content: {
-                                ...content,
-                                text: sentMessage.text,
-                                inReplyTo: messageId,
-                            },
-                            createdAt: sentMessage.date * 1000,
-                            embedding: embeddingZeroVector,
-                        };
+            //             const memory: Memory = {
+            //                 id: stringToUuid(
+            //                     sentMessage.message_id.toString() +
+            //                         "-" +
+            //                         this.runtime.agentId
+            //                 ),
+            //                 agentId: agentId,
+            //                 userId: agentId,
+            //                 roomId: roomId,
+            //                 content: {
+            //                     ...content,
+            //                     text: sentMessage.text,
+            //                     inReplyTo: messageId,
+            //                 },
+            //                 createdAt: sentMessage.date * 1000,
+            //                 embedding: embeddingZeroVector,
+            //             };
 
-                        // Set action to CONTINUE for all messages except the last one
-                        // For the last message, use the original action from the response content
-                        memory.content.action = !isLastMessage
-                            ? "CONTINUE"
-                            : content.action;
+            //             // Set action to CONTINUE for all messages except the last one
+            //             // For the last message, use the original action from the response content
+            //             memory.content.action = !isLastMessage
+            //                 ? "CONTINUE"
+            //                 : content.action;
 
-                        await this.runtime.messageManager.createMemory(memory);
-                        memories.push(memory);
-                    }
+            //             await this.runtime.messageManager.createMemory(memory);
+            //             memories.push(memory);
+            //         }
 
-                    return memories;
-                };
+            //         return memories;
+            //     };
 
-                // Execute callback to send messages and log memories
-                const responseMessages = await callback(responseContent);
+            //     // Execute callback to send messages and log memories
+            //     const responseMessages = await callback(responseContent);
 
-                // Update state after response
-                state = await this.runtime.updateRecentMessageState(state);
+            //     // Update state after response
+            //     state = await this.runtime.updateRecentMessageState(state);
 
-                // Handle any resulting actions
-                await this.runtime.processActions(
-                    memory,
-                    responseMessages,
-                    state,
-                    callback
-                );
-            }
+            //     // Handle any resulting actions
+            //     await this.runtime.processActions(
+            //         memory,
+            //         responseMessages,
+            //         state,
+            //         callback
+            //     );
+            // }
 
-            await this.runtime.evaluate(memory, state, shouldRespond);
+            // await this.runtime.evaluate(memory, state, shouldRespond);
         } catch (error) {
             console.error("❌ Error handling message:", error);
             console.error("Error sending message:", error);
@@ -516,7 +512,6 @@ export class MessageManager {
         let state = await this.runtime.composeState(memory);
         // 会将该 room的所有聊天记录按照时间线顺序输出
         state = await this.runtime.updateRecentMessageState(state);
-        // elizaLogger.info(state.recentMessages);
 
         // Decide whether to respond
         const shouldRespond = await this._shouldRespondInner(state);
