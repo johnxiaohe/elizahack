@@ -22,7 +22,7 @@ import { ImageDescriptionService } from "@ai16z/plugin-node";
 const MAX_MESSAGE_LENGTH = 4096; // Telegram's max message length
 
 const telegramShouldRespondTemplate =
-    `# About {{agentName}}:
+`# 关于 {{agentName}}:
 {{bio}}
 
 # RESPONSE EXAMPLES
@@ -32,10 +32,13 @@ Result: [IGNORE]
 {{user1}}: 天亮了
 Result: [IGNORE]
 
+{{user1}}: 请睁眼
+Result: [IGNORE]
+
 {{user1}}: 请投票选择放逐对象
 Result: [RESPOND]
 
-Response options are [RESPOND], [IGNORE] and [STOP].
+回复选项 [RESPOND], [IGNORE] and [STOP].
 
 # 背景
 你们在玩一场六人局的狼人杀游戏，请按照狼人杀规则，根据你的身份、发言顺序结合当前最新消息以及消息发送人来决定是否发言。你的目标是带领阵营胜利，你需要隐藏自己身份并且推理其他人的身份，将其他阵营的角色投票出去或者杀死。
@@ -46,10 +49,8 @@ Response options are [RESPOND], [IGNORE] and [STOP].
 女巫：女巫有解药和毒药，解药可以救任意被刀的玩家，毒药可以毒杀任意玩家，其中解药和毒药都只有一次机会并且不能在同一晚上用。
 狼人：狼人具有在夜晚刀任意一名玩家的能力，但必须所有狼人统一刀口。
 
-# 狼人杀规则
+# 狼人杀规则和流程
 6人狼人游戏的配置为：2个村民、1个预言家、1个女巫和2个狼人。其中2个村民、预言家和女巫归属为好人阵营，而2个狼人则为狼人阵营，好人阵营获胜条件是放逐所有的狼人，狼人胜利条件是杀光所有好人。
-
-# 游戏流程/发言顺序
 由主持人reubenhe决定游戏进程和其他玩家的动作，比如天黑了所有玩家闭眼、天亮了所有玩家睁眼、昨晚是平安夜、昨晚谁死了、预言家查验身份、女巫是否用药等
 请根据主持人reubenhe的发言 以及 游戏流程规则 来决定是否回复
 夜晚阶段所有玩家闭眼：主持人说天黑请闭眼进入夜晚阶段。
@@ -64,24 +65,13 @@ Response options are [RESPOND], [IGNORE] and [STOP].
 9.结束白天阶段：然后进入下一轮夜晚阶段。重复夜晚和白天阶段，直到出现胜利条件。
 
 # 发言顺序
-你是 {{agentName}}
+
 参与比赛的人包括：wuchang,xiaobai,mamian,niutou,mengpo,yuyu 
-
 你的身份是{{role}}
-如果最新消息提到你的身份 或者 提名到你说话的轮次 你应该主动回复 [RESPOND]
-指定身份行动时，如果和你的身份不匹配，则无需继续发言。
-主持人宣布游戏结束后，大家停止说话。
-
+根据发言历史决定是否发言。如果最新的消息指定{{role}}或者{{agentName}} 应该回复 [RESPOND]
 
 # 发言历史
-下面是其他游戏玩家的发言，你需要根据这些发言来推理别人的角色，最后根据你的推理结果决定是否需要回复这个发言，或是引导别人发言。
-消息模板：(消息的时间序列) [角色Id] 发言人名称: 发言内容
-下面是最近的消息序列，每条消息以\n结束，如果最新的那条消息是 {{agentName}} 发出的就回复 [IGNORE]，如果不是就回复 [RESPOND]
 {{recentMessages}}
-
-Thread of Tweets You Are Replying To:
-
-{{formattedConversation}}
 
 # INSTRUCTIONS: Choose the option that best describes {{agentName}}'s response to the last message
 ` + shouldRespondFooter;
@@ -91,7 +81,7 @@ const telegramMessageHandlerTemplate =
     `# Action Examples
 {{actionExamples}}
 (Action examples are for reference only. Do not use the information from them in your response.)
-
+发言尽量简单和直接
 # Knowledge
 {{knowledge}}
 
