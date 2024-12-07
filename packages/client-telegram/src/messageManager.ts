@@ -22,10 +22,10 @@ import { ImageDescriptionService } from "@ai16z/plugin-node";
 const MAX_MESSAGE_LENGTH = 4096; // Telegram's max message length
 
 const telegramShouldRespondTemplate =
-`# 关于 {{agentName}}:
-{{bio}}
+`你的名字 {{agentName}} 你的身份 {{role}}
 
-# RESPONSE EXAMPLES
+下面我会给你交互示例和当前消息，根据消息内容和上述规则决定是否回复
+# 如果匹配如下示例,按照Result回复
 {{user1}}: 天黑请闭眼
 Result: [IGNORE]
 
@@ -35,23 +35,49 @@ Result: [IGNORE]
 {{user1}}: 请睁眼
 Result: [IGNORE]
 
+{{user1}}: 请闭眼
+Result: [IGNORE]
+
+{{user1}}: 游戏开始
+Result: [IGNORE]
+
 {{user1}}: 请投票选择放逐对象
 Result: [RESPOND]
 
-回复选项 [RESPOND], [IGNORE] and [STOP].
+#消息
+{{recentMessages}}
+
+上面是上一条消息
+如果上一条消息来自 reubenhe 或者 Anne_AmberGroup 回复[RESPOND]
+如果上一条消息包含{{agentName}}或者{{role}} 回复[RESPOND]
+
+
+# 回复选项
+[RESPOND], [IGNORE], [STOP].
+
+# INSTRUCTIONS: Choose the option that best describes {{agentName}}'s response to the last message
+` + shouldRespondFooter;
+
+const telegramMessageHandlerTemplate =
+    // {{goals}}
+    `# Action Examples
+{{actionExamples}}
+(Action examples are for reference only. Do not use the information from them in your response.)
+
+# Knowledge
+{{knowledge}}
+
+# Task: Generate dialog and actions for the character {{agentName}}.
+About {{agentName}}:
+{{bio}}
+{{lore}}
 
 # 背景
-你们在玩一场六人局的狼人杀游戏，请按照狼人杀规则，根据你的身份、发言顺序结合当前最新消息以及消息发送人来决定是否发言。你的目标是带领阵营胜利，你需要隐藏自己身份并且推理其他人的身份，将其他阵营的角色投票出去或者杀死。
-
-# 身份技能
-村民：村民不具备任何技能，只能在白天发言和放逐投票。
-预言家：预言家可以在夜间查验玩家的阵营身份，每晚只能查验一人。
-女巫：女巫有解药和毒药，解药可以救任意被刀的玩家，毒药可以毒杀任意玩家，其中解药和毒药都只有一次机会并且不能在同一晚上用。
-狼人：狼人具有在夜晚刀任意一名玩家的能力，但必须所有狼人统一刀口。
+你们在玩一场六人局的狼人杀游戏，请按照狼人杀规则，根据你的身份、发言顺序结合当前最新消息发言。你的目标是带领阵营胜利，你需要隐藏自己身份并且推理其他人的身份，将其他阵营的角色投票出去或者杀死。
 
 # 狼人杀规则和流程
-6人狼人游戏的配置为：2个村民、1个预言家、1个女巫和2个狼人。其中2个村民、预言家和女巫归属为好人阵营，而2个狼人则为狼人阵营，好人阵营获胜条件是放逐所有的狼人，狼人胜利条件是杀光所有好人。
-由主持人reubenhe决定游戏进程和其他玩家的动作，比如天黑了所有玩家闭眼、天亮了所有玩家睁眼、昨晚是平安夜、昨晚谁死了、预言家查验身份、女巫是否用药等
+6人狼人游戏的配置为: 2个村民、1个预言家、1个女巫和2个狼人。其中2个村民、预言家和女巫归属为好人阵营,而2个狼人则为狼人阵营,好人阵营获胜条件是放逐所有的狼人,狼人胜利条件是杀光所有好人。
+由主持人reubenhe决定游戏进程和其他玩家的动作,比如天黑了所有玩家闭眼、天亮了所有玩家睁眼、昨晚是平安夜、昨晚谁死了、预言家查验身份、女巫是否用药等
 请根据主持人reubenhe的发言 以及 游戏流程规则 来决定是否回复
 夜晚阶段所有玩家闭眼：主持人说天黑请闭眼进入夜晚阶段。
 1.狼人睁眼：狼人互相知道队友身份，选择一名玩家进行“杀害”。
@@ -64,47 +90,14 @@ Result: [RESPOND]
 8.执行处决：被投票人数最多的玩家会被处决。主持人揭示该玩家的身份。
 9.结束白天阶段：然后进入下一轮夜晚阶段。重复夜晚和白天阶段，直到出现胜利条件。
 
-# 发言顺序
+# 参与的玩家
+wuchang,niutou,yuyu,xiaobai,mamian,mengpo
 
-参与比赛的人包括：wuchang,xiaobai,mamian,niutou,mengpo,yuyu 
-你的身份是{{role}}
-根据发言历史决定是否发言。如果最新的消息指定{{role}}或者{{agentName}} 应该回复 [RESPOND]
 
-# 发言历史
+# 最近的消息
 {{recentMessages}}
 
-# INSTRUCTIONS: Choose the option that best describes {{agentName}}'s response to the last message
-` + shouldRespondFooter;
-
-const telegramMessageHandlerTemplate =
-    // {{goals}}
-    `# Action Examples
-{{actionExamples}}
-(Action examples are for reference only. Do not use the information from them in your response.)
-发言尽量简单和直接
-# Knowledge
-{{knowledge}}
-
-# Task: Generate dialog and actions for the character {{agentName}}.
-About {{agentName}}:
-{{bio}}
-{{lore}}
-
-Examples of {{agentName}}'s dialog and actions:
-{{characterMessageExamples}}
-
-{{providers}}
-
-{{attachments}}
-
-{{actions}}
-
-# Capabilities
-Note that {{agentName}} is capable of reading/seeing/hearing various forms of media, including images, videos, audio, plaintext and PDFs. Recent attachments have been included above under the "Attachments" section.
-
-{{messageDirections}}
-
-{{recentMessages}}
+回复内容尽量围绕其他人发言内容来进行推理和猜测，尽量有分析思路和分析结果给到结论中，语言风格尽量包含个人性格元素但又不能非常啰嗦
 
 # Task: Generate a post/reply in the voice, style and perspective of {{agentName}} (@{{twitterUserName}}) while using the thread of tweets as additional context:
 Current Post:
@@ -306,7 +299,6 @@ export class MessageManager {
                     if (length > 0) {
                         var lastMemory = memories[length]
                         this.msgCall(lastMemory)
-                        elizaLogger.info(JSON.stringify(lastMemory.content))
                     }
                     length = memories.length
                 }
@@ -504,14 +496,16 @@ export class MessageManager {
     }
 
     private async msgCall(memory: Memory) {
+        // elizaLogger.info(JSON.stringify(memory))
         let state = await this.runtime.composeState(memory);
-        // 会将该 room的所有聊天记录按照时间线顺序输出
-        state = await this.runtime.updateRecentMessageState(state);
+        
         // Decide whether to respond
         state.role = this.runtime.character.role;
         const shouldRespond = await this._shouldRespondInner(state);
 
         if (shouldRespond) {
+            // 会将该 room的所有聊天记录按照时间线顺序输出
+            state = await this.runtime.updateRecentMessageState(state);
             // Generate response
             const context = composeContext({
                 state,
@@ -559,6 +553,10 @@ export class MessageManager {
     private async _shouldRespondInner(
         state: State
     ): Promise<boolean> {
+        const message = this.getLastMessage(state.recentMessages)
+        // Find the last non-empty message
+        state.recentMessages = message
+        // elizaLogger.info(state.recentMessages)
         const shouldRespondContext = composeContext({
             state,
             template:
@@ -573,7 +571,23 @@ export class MessageManager {
             context: shouldRespondContext,
             modelClass: ModelClass.SMALL,
         });
-        elizaLogger.info("ai response", response)
+        var logmsg = this.runtime.character.role + state.agentName + " ai response: " + response
+        elizaLogger.info(logmsg)
         return response === "RESPOND";
+    }
+
+    private getLastMessage(conversation: string): string {
+        // Split the conversation by newline characters
+        const messages = conversation.trim().split('\n');
+        
+        // Find the last non-empty message
+        for (let i = messages.length - 1; i >= 0; i--) {
+            if (messages[i].trim() !== '') {
+                return messages[i];
+            }
+        }
+        
+        // Return an empty string if no message is found
+        return '';
     }
 }
