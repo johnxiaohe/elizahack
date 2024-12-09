@@ -1,127 +1,33 @@
-# Eliza 🤖
+# SoBetAI
 
-<div align="center">
-  <img src="./docs/static/img/eliza_banner.jpg" alt="Eliza Banner" width="100%" />
-</div>
+## 灵感来源是图灵测试。
 
-<div align="center">
-  
-  📖 [Documentation](https://ai16z.github.io/eliza/) | 🎯 [Examples](https://github.com/thejoven/awesome-eliza)
-  
-</div>
+1950年，Alan Turing在《Mind》上发表文章“Computing Machinery and Intelligence”。
 
-## 🌍 README Translations
+#### 提出问题：机器是否能够思考？
+  - 图灵将“机器能否思考”的问题转化为更明确的形式，即“机器能否在模仿游戏 (The Imitation Game) 中表现得像人一样？”。
+  - 模仿游戏：涉及三方——一个人类提问者、一名参与者和一台机器。提问者通过一系列问题尝试区分机器和人类。
 
-[中文说明](./README_CN.md) | [日本語の説明](./README_JA.md) | [한국어 설명](./README_KOR.md) | [Français](./README_FR.md) | [Português](./README_PTBR.md) | [Türkçe](./README_TR.md) | [Русский](./README_RU.md) | [Español](./README_ES.md) | [Italiano](./README_IT.md)
+#### 未来展望：2000年机器学习
+  - 图灵预测，随着技术的进步，到 2000 年左右，计算机能够以一种不可区分的方式通过模仿游戏。
+  - 他相信，社会对“机器是否能思考”的接受将随着时间的推移而改变。
 
-## ✨ Features
 
--   🛠️ Full-featured Discord, Twitter and Telegram connectors
--   🔗 Support for every model (Llama, Grok, OpenAI, Anthropic, etc.)
--   👥 Multi-agent and room support
--   📚 Easily ingest and interact with your documents
--   💾 Retrievable memory and document store
--   🚀 Highly extensible - create your own actions and clients
--   ☁️ Supports many models (local Llama, OpenAI, Anthropic, Groq, etc.)
--   📦 Just works!
+为了增加趣味性，我们用了现在比较流行的社交推理游戏作demo。观察游戏过程中，AI在一定目标下的表现、人类和AI的互动，并把这个评判权利交给观众，观点token化、数字化、价值化，类似polymartket.
 
-## 🎯 Use Cases
+### 社交推理游戏，游戏过程中玩家需要通过观察、推理和互动完成任务或达成目标。
 
--   🤖 Chatbots
--   🕵️ Autonomous Agents
--   📈 Business Process Handling
--   🎮 Video Game NPCs
--   🧠 Trading
+### 考察能力：Agentic
+- 社交沟通能力——elisa框架，角色扮演
+- 逻辑推理能力——意图分析
+- 战略决策能力——策略规划
+- 团队协作合作——人与人，人与AI，AI与AI
 
-## 🚀 Quick Start
 
-### Prerequisites
+### Play a social reasoning game with a self-learn AI agent, who will win?
 
--   [Python 2.7+](https://www.python.org/downloads/)
--   [Node.js 22+](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
--   [pnpm](https://pnpm.io/installation)
+### 希特勒、武则天、爱因斯坦、孙悟空、莎士比亚等人在一起，玩一场狼人杀会是怎样的情景？
 
-> **Note for Windows Users:** [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install-manual) is required.
 
-### Use the Starter (Recommended)
-
-```bash
-git clone https://github.com/ai16z/eliza-starter.git
-
-cp .env.example .env
-
-pnpm i && pnpm start
-```
-
-Then read the [Documentation](https://ai16z.github.io/eliza/) to learn how to customize your Eliza.
-
-### Manually Start Eliza (Only recommended if you know what you are doing)
-
-```bash
-# Clone the repository
-git clone https://github.com/ai16z/eliza.git
-
-# Checkout the latest release
-# This project iterates fast, so we recommend checking out the latest release
-git checkout $(git describe --tags --abbrev=0)
-```
-
-### Edit the .env file
-
-Copy .env.example to .env and fill in the appropriate values.
-
-```
-cp .env.example .env
-```
-
-Note: .env is optional. If your planning to run multiple distinct agents, you can pass secrets through the character JSON
-
-### Automatically Start Eliza
-
-This will run everything to setup the project and start the bot with the default character.
-
-```bash
-sh scripts/start.sh
-```
-
-### Edit the character file
-
-1. Open `agent/src/character.ts` to modify the default character. Uncomment and edit.
-
-2. To load custom characters:
-    - Use `pnpm start --characters="path/to/your/character.json"`
-    - Multiple character files can be loaded simultaneously
-
-### Manually Start Eliza
-
-```bash
-pnpm i
-pnpm build
-pnpm start
-
-# The project iterates fast, sometimes you need to clean the project if you are coming back to the project
-pnpm clean
-```
-
-#### Additional Requirements
-
-You may need to install Sharp. If you see an error when starting up, try installing it with the following command:
-
-```
-pnpm install --include=optional sharp
-```
-
-### Community & contact
-
--   [GitHub Issues](https://github.com/ai16z/eliza/issues). Best for: bugs you encounter using Eliza, and feature proposals.
--   [Discord](https://discord.gg/ai16z). Best for: sharing your applications and hanging out with the community.
-
-## Contributors
-
-<a href="https://github.com/ai16z/eliza/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ai16z/eliza" />
-</a>
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=ai16z/eliza&type=Date)](https://star-history.com/#ai16z/eliza&Date)
+## 项目名：SoBetAI
+## 一句话介绍：一款基于AI Agent的人机社交、推理、游戏、web3娱乐平台。
