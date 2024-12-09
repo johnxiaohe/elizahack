@@ -62,7 +62,7 @@ export async function generateText({
         return "";
     }
 
-    elizaLogger.log("Genarating text...");
+    // elizaLogger.log("Genarating text...");
 
     const provider = runtime.modelProvider;
     const endpoint =

@@ -8,7 +8,7 @@ import elizaLogger from "./logger.ts";
 
 async function get(runtime: AgentRuntime, message: Memory): Promise<string[]> {
     const processed = preprocess(message.content.text);
-    elizaLogger.log(`Querying knowledge for: ${processed}`);
+    // elizaLogger.log(`Querying knowledge for: ${processed}`);
     const embedding = await embed(runtime, processed);
     const fragments = await runtime.knowledgeManager.searchMemoriesByEmbedding(
         embedding,
